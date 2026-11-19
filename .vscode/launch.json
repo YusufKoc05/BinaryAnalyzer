@@ -1,0 +1,31 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "🚀 (Masaüstü GUI) BinaryAnalyzer Uygulamasını Başlat",
+      "type": "cppvsdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/build/Debug/BinaryAnalyzerGUI.exe",
+      "args": [],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}",
+      "environment": [],
+      "console": "internalConsole",
+      "preLaunchTask": "CMake: Build"
+    },
+    {
+      "name": "💻 (Konsol CLI) BinaryAnalyzer [notepad.exe]",
+      "type": "cppvsdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/build/Debug/BinaryAnalyzer.exe",
+      "args": [
+        "C:\\Windows\\System32\\notepad.exe"
+      ],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}",
+      "environment": [],
+      "console": "integratedTerminal",
+      "preLaunchTask": "CMake: Build"
+    }
+  ]
+}

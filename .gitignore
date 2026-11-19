@@ -1,0 +1,32 @@
+# Build & Output
+build/
+bin/
+obj/
+out/
+x64/
+x86/
+Debug/
+Release/
+
+# Visual Studio & VS Code cache
+.vs/
+.vscode/ipch/
+*.VC.db
+*.opendb
+*.user
+*.suo
+
+# Binary Executables & Debug Symbols
+*.exe
+*.dll
+*.obj
+*.pdb
+*.ilk
+*.lib
+*.exp
+
+# OS / Temporary
+.DS_Store
+Thumbs.db
+desktop.ini
+

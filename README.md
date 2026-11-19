@@ -1,7 +1,7 @@
 <div align="center">
 
 # 🛡️ BinaryAnalyzer v2.0
-### Advanced Static Binary & Malware Threat Analyzer
+### Advanced Static Binary & Malware Threat Triage Platform
 
 [![C++ Standard](https://img.shields.io/badge/C%2B%2B-17%2F20-blue.svg?style=for-the-badge&logo=cplusplus)](https://en.cppreference.com/)
 [![Platform](https://img.shields.io/badge/Platform-Windows-0078D6.svg?style=for-the-badge&logo=windows)](https://microsoft.com/windows)
@@ -10,187 +10,191 @@
 [![License](https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge)](LICENSE)
 
 <p align="center">
-  <b>BinaryAnalyzer</b> is a high-performance, native C++ static analysis and malware threat triage platform designed for reverse engineers, SOC analysts, and security researchers. It performs deep structural analysis of Windows Portable Executable (<b>PE32/PE32+</b>) and Linux <b>ELF</b> binaries, calculates industry-standard <b>Imphash</b>, maps suspicious indicators directly to the <b>MITRE ATT&CK®</b> matrix, detects compilers/packers, analyzes Entry Point opcodes, and evaluates threats through an intelligent, zero-false-positive scoring engine.
+  <b>BinaryAnalyzer</b> is a lightweight, high-performance static binary analysis and threat triage engine written in modern C++. It analyzes Windows Portable Executable (<b>PE32/PE32+</b>) and Linux <b>ELF</b> binaries, computes standard <b>Imphash</b>, maps suspicious indicators directly to the <b>MITRE ATT&CK®</b> framework, detects compiler signatures, inspects entry point disassembly, and calculates threat scores with zero false-positive calibration.
 </p>
 
-[✨ Özellikler](#-temel-özellikler) • [📸 Ekran Görüntüleri](#-ekran-görüntüleri) • [📊 Tehdit & MITRE ATT&CK](#-mitre-attck-ve-tehdit-puanlama-motoru) • [🛠️ Kurulum & Derleme](#-kurulum-ve-derleme) • [💻 Kullanım](#-kullanım)
+<p align="center">
+  <b>Language:</b> <a href="README.md">English</a> • <a href="README.tr.md">Türkçe</a>
+</p>
+
+[Key Features](#-key-features) • [Screenshots](#-screenshots) • [MITRE ATT&CK Mapping](#-mitre-attck-threat-scoring) • [Building & Installation](#-building-from-source) • [Usage](#-usage)
 
 ---
 
 </div>
 
-## 📸 Ekran Görüntüleri (Screenshots)
+## 📸 Screenshots
 
-### 1. Koyu Tema Genel Bakış, Hashes & Imphash (Dark Mode Overview)
-> Dosya parmak izleri (MD5, SHA-1, SHA-256), Mandiant/VirusTotal standardında Imphash, derleyici parmak izi ve exploit savunma mitigasyonları (ASLR, DEP, CFG, SEH).
+### 1. Dark Mode Overview & Hashes
+> Displaying file fingerprints (MD5, SHA-1, SHA-256), Mandiant/VirusTotal standard Imphash, compiler identification, and exploit mitigation telemetry (ASLR, DEP, CFG, SEH).
 
-![Genel Bakış](screenshots/dark_mode_overview_notepad.png)
-
----
-
-### 2. Statik Tehdit Analizi & MITRE ATT&CK® Matris Eşleştirmesi
-> Şüpheli API çağrıları, davranış zincirleri ve persistence göstergelerinin resmi MITRE ATT&CK teknik ve taktik kodlarıyla listelenmesi.
-
-![MITRE ATT&CK](screenshots/mitre_attack_threat_matrix.png)
+![Overview](screenshots/dark_mode_overview_notepad.png)
 
 ---
 
-### 3. Gelişmiş İkili Dosya & Derleyici Tespiti (Rust, TLS Callbacks, Overlay)
-> Büyük ölçekli binary dosyalarında (Godot Engine vb.) Rust derleyici tespiti, 5 adet TLS Callback fonksiyonu ve dijital imza/overlay analizi.
+### 2. Static Malware Findings & MITRE ATT&CK® Matrix
+> Suspicious API behaviors and persistence indicators mapped directly to official MITRE ATT&CK techniques and tactics.
 
-![Rust & TLS Callback Analizi](screenshots/dark_mode_overview_godot.png)
-
----
-
-### 4. Hızlı Dosya Seçimi & Sürükle-Bırak Entegrasyonu
-> Tek tıkla dosya seçimi veya herhangi bir `.exe` / `.dll` / `ELF` dosyasını arayüze sürükleyip anında analiz başlatma.
-
-![Dosya Seçim Dialogu](screenshots/file_dialog_selection.png)
+![Threat Matrix](screenshots/mitre_attack_threat_matrix.png)
 
 ---
 
-## ✨ Temel Özellikler
+### 3. Compiler Detection, TLS Callbacks & Overlay Inspection
+> Deep inspection on complex binaries (e.g., Godot Engine) identifying Rust tooling, TLS callback addresses, and appended digital signature overlay data.
 
-### 🔍 1. Kapsamlı PE & ELF Ayrıştırıcı (Binary Parsing Engine)
-- **Format & Mimari:** PE32 (32-bit), PE32+ (64-bit AMD64/ARM64), ELF32, ELF64, Little/Big Endian desteği.
-- **Header Analizi:** DOS MZ Header, COFF File Header, Optional Header, Subsystem (GUI / CUI / Driver), ImageBase, EntryPoint, Derleme Zamanı (TimeDateStamp).
-- **Section & Shannon Entropi Analizi:**
-  - Her bir bölümün (`.text`, `.rdata`, `.data`, `.rsrc`, `.reloc` vb.) Virtual/Raw boyutları, bellek izinleri (Read/Write/Execute).
-  - **Shannon Entropisi (0.00 - 8.00):** Şifrelenmiş, paketlenmiş (packed) veya sıkıştırılmış kod bölümlerinin tespiti.
-- **Güvenlik Mitigasyonları:** ASLR (Dynamic Base), DEP/NX (No-Execute), Control Flow Guard (CFG), SafeSEH kontrolü.
-- **Dijital İmza & Overlay:** PE Authenticode sertifika varlığı ve dosya sonuna iliştirilmiş gizli veri (Overlay) tespiti.
+![Rust & TLS Inspection](screenshots/dark_mode_overview_godot.png)
 
-### 🛡️ 2. Standart Imphash (Import Hash) Hesaplama
-- Mandiant / FireEye ve VirusTotal standardına tam uyumlu Imphash algoritması.
-- DLL uzantılarını (`.dll`, `.sys`, `.ocx`) normalize ederek, ordinalleri ve API fonksiyon isimlerini küçük harfe dönüştürüp sıralı MD5 özeti üretir.
-- Zararlı yazılım ailelerinin (malware families) varyantlarını import tablosundan anında eşleştirmeyi sağlar.
+---
 
-### 🎯 3. MITRE ATT&CK® Matrisi ile Otomatik Tehdit Haritalama
-Tüm statik bulgular, resmi MITRE ATT&CK teknik ve taktik kimlikleriyle ilişkilendirilir:
-| Tespit Edilen Gösterge | MITRE ATT&CK ID | MITRE ATT&CK Taktik & Açıklama |
+### 4. Fast File Selection & Drag-and-Drop
+> Rapid file picker dialog or instant drag-and-drop support for any `.exe`, `.dll`, or `ELF` binary.
+
+![File Dialog](screenshots/file_dialog_selection.png)
+
+---
+
+## ✨ Key Features
+
+### 🔍 1. Comprehensive PE & ELF Parsing
+- **Formats & Architectures:** PE32 (32-bit), PE32+ (64-bit AMD64/ARM64), ELF32, ELF64, Little/Big Endian.
+- **Headers & Telemetry:** DOS MZ Header, COFF File Header, Optional Header, Subsystem classification, ImageBase, EntryPoint, Compilation Timestamp.
+- **Section & Shannon Entropy Analysis:**
+  - Evaluates Virtual/Raw sizes and section permissions (Read/Write/Execute).
+  - **Shannon Entropy (0.00 - 8.00):** Accurately flags obfuscated, packed, or compressed code sections.
+- **Exploit Mitigations:** ASLR (Dynamic Base), DEP/NX, Control Flow Guard (CFG), and SafeSEH status.
+- **Digital Signatures & Overlays:** Authenticode presence and appended payload detection.
+
+### 🛡️ 2. Standard Imphash (Import Hash) Engine
+- Compliant with Mandiant / FireEye and VirusTotal import hash calculation standards.
+- Normalizes library extensions (`.dll`, `.sys`, `.ocx`), ordinals, and imported symbols to lowercase before hashing with MD5.
+- Allows rapid correlation and malware family tracking across variants.
+
+### 🎯 3. MITRE ATT&CK® Threat Mapping
+Static behavioral indicators are categorized and mapped directly to MITRE ATT&CK techniques:
+| Indicator / Behavioral Chain | MITRE ATT&CK ID | MITRE ATT&CK Tactic & Description |
 |---|---|---|
-| **Process Injection Zinciri** (`VirtualAllocEx` + `WriteProcessMemory` / `CreateRemoteThread`) | `T1055` | Defense Evasion / Privilege Escalation |
-| **Yazılım Paketleme / Şifreleme** (Yüksek Entropili Executable Bölüm) | `T1027.002` | Defense Evasion: Software Packing |
-| **Giriş Dinleme / Keylogger** (`SetWindowsHookEx` + `GetAsyncKeyState`) | `T1056.001` | Collection: Keylogging |
-| **Zaman Aşımı / Sandbox Geciktirme** (`SleepEx`, `NtDelayExecution`) | `T1497.003` | Defense Evasion: Time Based Evasion |
-| **Anti-Debugging / Analiz Engelleme** (`IsDebuggerPresent`, `CheckRemoteDebuggerPresent`) | `T1497` | Defense Evasion: Virtualization/Sandbox Evasion |
-| **TLS Callback Fonksiyonları** (EntryPoint Öncesi Gizli Kod Çalıştırma) | `T1547.001` | Persistence / Defense Evasion: Hooking |
-| **Gölge Kopyaları Silme** (`vssadmin delete shadows`) | `T1490` | Impact: Inhibit System Recovery (Ransomware) |
-| **Uzak Komut İndirme & Yürütme** (`URLDownloadToFile`, `WinHttpOpen`) | `T1105` | Command and Control: Ingress Tool Transfer |
+| **Process Injection Chain** (`VirtualAllocEx` + `WriteProcessMemory` / `CreateRemoteThread`) | `T1055` | Defense Evasion / Privilege Escalation |
+| **Software Packing / Encryption** (High Entropy Executable Section) | `T1027.002` | Defense Evasion: Software Packing |
+| **Input Capture / Keylogging** (`SetWindowsHookEx` + `GetAsyncKeyState`) | `T1056.001` | Collection: Keylogging |
+| **Time-Based Evasion / Sandbox Delay** (`SleepEx`, `NtDelayExecution`) | `T1497.003` | Defense Evasion: Time Based Evasion |
+| **Anti-Debugging / Analysis Detection** (`IsDebuggerPresent`, `CheckRemoteDebuggerPresent`) | `T1497` | Defense Evasion: Virtualization/Sandbox Evasion |
+| **TLS Callback Execution** (Pre-EntryPoint Code Execution) | `T1547.001` | Persistence / Defense Evasion: Hooking |
+| **Inhibit System Recovery** (`vssadmin delete shadows`) | `T1490` | Impact: Inhibit System Recovery (Ransomware) |
+| **Ingress Tool Transfer** (`URLDownloadToFile`, `WinHttpOpen`) | `T1105` | Command and Control: Ingress Tool Transfer |
 
-### 🔬 4. Derleyici & Araç Tespiti (Compiler Fingerprinting)
-Statik parmak izi analiziyle binary'nin hangi derleyici veya dille oluşturulduğunu tespit eder:
+### 🔬 4. Compiler & Tooling Fingerprinting
+Static signatures and artifact patterns detect the underlying build environment:
 - **Microsoft Visual C/C++ (MSVC)**
 - **MinGW / GCC**
 - **Rust (`rustc`)**
 - **Go (`runtime.main` / Go build IDs)**
 - **Embarcadero Delphi / FreePascal**
-- **.NET / CLR Header** (C#, VB.NET, F#)
+- **.NET / CLR Runtime Header**
 
 ### ⚡ 5. Entry Point Hex & Disassembly Inspector
-- Programın giriş noktasındaki (`EntryPoint`) ilk 64 baytlık makine kodunu ofset adresleri, hex baytları ve ASCII karşılığıyla gösterir.
-- **Prologue Sınıflandırması:**
-  - `sub rsp, xx` (Modern 64-bit Stack Frame Tahsisi)
-  - `push ebp; mov ebp, esp` (Klasik 32-bit cdecl/stdcall Frame)
-  - `jmp [IAT]` (Import Adres Tablosu dolaylı atlama)
-  - `xor ebp, ebp` (ELF ABI başlangıç rutini)
+- Dumps the first 64 bytes at the binary entry point with address offsets, hexadecimal bytes, and printable ASCII representation.
+- **Automated Prologue Classification:**
+  - `sub rsp, xx` (Standard x64 Stack Frame Allocation)
+  - `push ebp; mov ebp, esp` (Standard x86 Stack Frame Setup)
+  - `jmp [IAT]` (Indirect Import Address Table Jump)
+  - `xor ebp, ebp` (ELF ABI Initialization Routine)
 
-### 🎨 6. Modern Win32 Koyu Tema Arayüzü (Dark Mode GUI)
-- Harici hantal kütüphanelere ihtiyaç duymayan, saf C++ Win32 API ile geliştirilmiş son derece hafif ve modern arayüz.
-- `#121214` koyu arka plan, kontrastlı Segoe UI & Consolas tipografisi.
-- **7 Organize Sekme:**
-  1. 📋 **Genel Bakış & Header:** Dosya hashes, Imphash, derleyici, exploit mitigasyonları.
-  2. 📑 **Bölümler (Sections) & Entropi:** Bölüm listesi, izinler (RWX bayrakları), entropi skorları.
-  3. 🔗 **Import & Exportlar:** Bağımlı DLL'ler ve dışa/içe aktarılan fonksiyonlar.
-  4. 🛡️ **Tehditler (MITRE ATT&CK):** Puan, kategori, açıklama, MITRE ID ve taktiği.
-  5. 🔍 **Stringler & IOC Taraması:** IP adresleri, URL'ler, registry yolları.
-  6. 💻 **Hex & Opcode Inspector:** Giriş noktası assembly ve hex dökümü.
-  7. 📄 **Ham Rapor:** TXT, JSON ve HTML olarak kaydetme + Panoya kopyalama.
-- **VirusTotal Entegrasyonu:** Tek tıkla taranan dosyanın SHA-256 özetini doğrudan VirusTotal'de aratma.
-- **Sürükle & Bırak Desteği:** Dosyaları pencereye sürükleyip anında analiz etme.
+### 🎨 6. Modern Win32 Dark Mode GUI
+- Native Win32 desktop application with zero heavy external UI dependencies.
+- `#121214` dark palette with crisp Segoe UI and Consolas typography.
+- **7 Dedicated Tabs:**
+  1. 📋 **Overview & Header:** Hashes, Imphash, compiler info, exploit defenses.
+  2. 📑 **Sections & Entropy:** Section table, RWX permissions, entropy values.
+  3. 🔗 **Imports & Exports:** Dependent libraries and exported/imported symbols.
+  4. 🛡️ **Threats (MITRE ATT&CK):** Threat score, category, detail, MITRE IDs.
+  5. 🔍 **Strings & IOCs:** Extracted URLs, IP addresses, registry paths.
+  6. 💻 **Hex & Disassembly:** Entry point opcode dump and prologue classification.
+  7. 📄 **Raw Report:** Full report view, clipboard copy, and export to TXT, JSON, or HTML.
+- **One-Click VirusTotal Lookup:** Instantly query the binary SHA-256 hash in your browser.
+- **Drag-and-Drop:** Drop any executable onto the window to trigger immediate analysis.
 
 ---
 
-## 🏗️ Proje Mimarisi
+## 🏗️ Architecture & Project Structure
 
 ```
 BinaryAnalyzer/
-├── CMakeLists.txt            # CMake modern derleme yapılandırması
-├── BinaryAnalyzerGUI.cpp     # Modern Koyu Tema Win32 Arayüz Uygulaması
-├── BinaryAnalyzer.cpp        # Hızlı ve Güçlü Konsol (CLI) Uygulaması
-├── AnalyzerEngine.h / .cpp   # GUI & CLI için merkezi analiz motoru ve raporlayıcı
-├── PEParser.h / .cpp         # PE32/PE32+ ayrıştırıcı, Imphash, TLS & Hex motoru
-├── ELFParser.h / .cpp        # Linux ELF32/ELF64 binary ayrıştırıcı
-├── MalwareAnalyzer.h / .cpp  # MITRE ATT&CK eşleştirme ve statik tehdit puanlama
-├── BinaryFile.h / .cpp       # Bellek eşlemeli dosya okuma, MD5, SHA-1, SHA-256, Entropi
-├── IParser.h                 # Genişletilebilir ortak Parser arayüzü
-├── screenshots/              # Arayüz ve analiz ekran görüntüleri
-└── .vscode/                  # VS Code derleme, hata ayıklama ve IDE ayarları
+├── CMakeLists.txt            # CMake build configuration
+├── BinaryAnalyzerGUI.cpp     # Native Win32 Dark Mode Desktop GUI Application
+├── BinaryAnalyzer.cpp        # Fast and lightweight Console (CLI) Application
+├── AnalyzerEngine.h / .cpp   # Shared analysis pipeline, JSON & HTML report generator
+├── PEParser.h / .cpp         # PE32/PE32+ parser, Imphash, TLS & Opcode engine
+├── ELFParser.h / .cpp        # Linux ELF32/ELF64 binary parser
+├── MalwareAnalyzer.h / .cpp  # MITRE ATT&CK threat evaluator and heuristic rules
+├── BinaryFile.h / .cpp       # Memory-mapped binary reader, MD5/SHA-1/SHA-256 & Entropy
+├── IParser.h                 # Extensible parser interface
+├── screenshots/              # High-resolution application screenshots
+└── .vscode/                  # Preconfigured VS Code tasks and debug profiles
 ```
 
 ---
 
-## 🛠️ Kurulum ve Derleme
+## 🛠️ Building from Source
 
-### Gereksinimler
-- **İşletim Sistemi:** Windows 10 veya Windows 11 (x64 / x86)
-- **Derleyici:** Microsoft Visual Studio 2022 (MSVC v143) veya Clang/LLVM
-- **Derleme Sistemi:** CMake 3.20 veya üzeri
+### Prerequisites
+- **Operating System:** Windows 10 or Windows 11 (x64 / x86)
+- **Compiler:** Microsoft Visual Studio 2022 (MSVC v143) or Clang/LLVM
+- **Build System:** CMake 3.20 or later
 
-### 1. Depoyu Klonlayın
+### 1. Clone the Repository
 ```bash
 git clone https://github.com/YusufKoc05/BinaryAnalyzer.git
 cd BinaryAnalyzer
 ```
 
-### 2. CMake ile Derleyin
+### 2. Configure and Build with CMake
 ```powershell
-# Projeyi yapılandırın
+# Configure build files
 cmake -B build -S .
 
-# Release modunda derleyin
+# Build in Release configuration
 cmake --build build --config Release
 ```
 
-Derleme tamamlandığında çıktılar `build/Release/` (veya Debug modunda `build/Debug/`) dizininde oluşturulur:
-- `BinaryAnalyzerGUI.exe` -> Modern Masaüstü Uygulaması
-- `BinaryAnalyzer.exe` -> Konsol (CLI) Aracı
+The compiled binaries will be generated under `build/Release/` (or `build/Debug/`):
+- `BinaryAnalyzerGUI.exe` -> Desktop GUI Application
+- `BinaryAnalyzer.exe` -> Command-Line (CLI) Tool
 
 ---
 
-## 💻 Kullanım
+## 💻 Usage
 
-### 🖥️ Grafiksel Arayüz (GUI) ile Kullanım
-1. `BinaryAnalyzerGUI.exe` dosyasını çalıştırın.
-2. Analiz etmek istediğiniz dosyayı **Dosya Seç...** butonuyla seçin veya doğrudan uygulama penceresine **sürükleyip bırakın**.
-3. Üst kısımdaki sekmeler arasında gezerek Header, MITRE ATT&CK bulguları, Imphash ve Hex kodlarını inceleyin.
-4. **Raporu Kaydet...** butonuna basarak analizi `.txt`, `.json` veya `.html` olarak dışa aktarabilirsiniz.
-5. **VirusTotal** butonuna basarak dosyanın global tehdit durumunu tarayıcınızda açabilirsiniz.
+### 🖥️ Desktop GUI
+1. Launch `BinaryAnalyzerGUI.exe`.
+2. Click **Dosya Seç... (Browse)** or simply **drag and drop** a binary into the window.
+3. Switch between tabs to explore headers, MITRE ATT&CK detections, Imphash, and hex disassembly.
+4. Export the findings via **Raporu Kaydet...** (Text, JSON, or HTML) or copy to clipboard.
+5. Click **VirusTotal** to inspect the hash on VirusTotal.
 
-### ⌨️ Komut Satırı (CLI) ile Kullanım
-Otomasyon betiklerinde veya terminalde hızlı inceleme yapmak için:
+### ⌨️ Command Line (CLI)
+For automated pipelines or rapid terminal analysis:
 ```powershell
-# Belirli bir dosyayı analiz etme
+# Analyze a specific binary
 .\BinaryAnalyzer.exe C:\Windows\System32\notepad.exe
 
-# veya doğrudan argümansız çalıştırıp terminale dosya sürükleme:
+# Or run interactively and drag a file path into the console:
 .\BinaryAnalyzer.exe
 ```
 
 ---
 
-## 🔒 Güvenlik & Gizlilik
-* **Tamamen Çevrimdışı (Offline) Statik Analiz:** BinaryAnalyzer, analiz edilen dosyaları veya içeriklerini hiçbir üçüncü taraf sunucuya göndermez. Tüm analiz işlemleri yerel CPU üzerinde statik olarak gerçekleşir.
-* **Güvenli Yürütme Yok:** Dosyalar hiçbir zaman çalıştırılmaz; bellek içi güvenli bayt okumalarıyla tersine mühendislik uygulanır.
+## 🔒 Security & Privacy Notice
+* **100% Offline Static Analysis:** BinaryAnalyzer performs purely local static analysis. No binary files or extracted payloads are ever transmitted to external servers.
+* **Non-Executing Environment:** The target binary is parsed strictly as passive byte data; it is never executed by the analysis engine.
 
 ---
 
-## 📜 Lisans
-Bu proje [MIT Lisansı](LICENSE) kapsamında açık kaynak olarak yayınlanmıştır.
+## 📜 License
+This project is licensed under the [MIT License](LICENSE).
 
 ---
 
 <div align="center">
-  Geliştirici: <b><a href="https://github.com/YusufKoc05">Yusuf Koç</a></b><br>
+  Author: <b><a href="https://github.com/YusufKoc05">Yusuf Koç</a></b><br>
   <i>Reverse Engineering • Malware Analysis • Threat Intelligence • Modern C++</i>
 </div>
